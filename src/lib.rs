@@ -6,13 +6,16 @@
 
 #[macro_use]
 mod macros;
-
-mod decode;
+mod decode_internal;
+/// module for decoding lzma file
+pub mod decode;
 mod encode;
 pub mod error;
 mod xz;
 
-use crate::decode::lzbuffer::LzBuffer;
+use decode::lzma_params::LzmaParams;
+
+use crate::decode_internal::lzbuffer::LzBuffer;
 use std::io;
 
 /// Compression helpers.
@@ -41,14 +44,24 @@ pub fn lzma_decompress_with_options<R: io::BufRead, W: io::Write>(
     output: &mut W,
     options: &decompress::Options,
 ) -> error::Result<()> {
-    let params = decode::lzma::LzmaParams::read_header(input, options)?;
+    let params = decode::lzma_params::LzmaParams::read_header(input, options)?;
+    lzma_decompress_with_options_with_lzma_params(input, output, options, params)
+}
+
+/// Decompress LZMA data with the provided options and params
+pub fn lzma_decompress_with_options_with_lzma_params<R: io::BufRead, W: io::Write>(
+    input: &mut R,
+    output: &mut W,
+    options: &decompress::Options,
+    lzma_params: LzmaParams,
+) -> error::Result<()> {
     let mut decoder = if let Some(memlimit) = options.memlimit {
-        decode::lzma::new_circular_with_memlimit(output, params, memlimit)?
+        decode_internal::lzma::new_circular_with_memlimit(output, lzma_params, memlimit)?
     } else {
-        decode::lzma::new_circular(output, params)?
+        decode_internal::lzma::new_circular(output, lzma_params)?
     };
 
-    let mut rangecoder = decode::rangecoder::RangeDecoder::new(input)
+    let mut rangecoder = decode_internal::rangecoder::RangeDecoder::new(input)
         .map_err(|e| error::Error::LzmaError(format!("LZMA stream too short: {}", e)))?;
     decoder.process(&mut rangecoder)?;
     decoder.output.finish()?;
@@ -78,7 +91,7 @@ pub fn lzma2_decompress<R: io::BufRead, W: io::Write>(
     input: &mut R,
     output: &mut W,
 ) -> error::Result<()> {
-    decode::lzma2::decode_stream(input, output)
+    decode_internal::lzma2::decode_stream(input, output)
 }
 
 /// Compress data with LZMA2 and default [`Options`](compress/struct.Options.html).
@@ -94,7 +107,7 @@ pub fn xz_decompress<R: io::BufRead, W: io::Write>(
     input: &mut R,
     output: &mut W,
 ) -> error::Result<()> {
-    decode::xz::decode_stream(input, output)
+    decode_internal::xz::decode_stream(input, output)
 }
 
 /// Compress data with XZ and default [`Options`](compress/struct.Options.html).

@@ -1,4 +1,4 @@
-use crate::decode::util;
+use crate::decode_internal::util;
 use crate::error;
 use byteorder::{BigEndian, ReadBytesExt};
 use std::io;

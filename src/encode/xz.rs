@@ -1,4 +1,4 @@
-use crate::decode;
+use crate::decode_internal;
 use crate::encode::lzma2;
 use crate::encode::util;
 use crate::xz::{footer, header, CheckMethod, StreamFlags};
@@ -94,7 +94,7 @@ where
         count_output.write_u32::<LittleEndian>(crc32)?;
 
         // Block
-        let mut count_input = decode::util::CountBufRead::new(input);
+        let mut count_input = decode_internal::util::CountBufRead::new(input);
         lzma2::encode_stream(&mut count_input, &mut count_output)?;
         (count_output.count(), count_input.count())
     };

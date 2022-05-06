@@ -1,7 +1,7 @@
 //! Decoder for the `.xz` file format.
 
-use crate::decode::lzma2;
-use crate::decode::util;
+use crate::decode_internal::lzma2;
+use crate::decode_internal::util;
 use crate::error;
 use crate::xz::{footer, header, CheckMethod, StreamFlags};
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};

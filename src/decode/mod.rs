@@ -1,12 +1,4 @@
-//! Decoding logic.
-
-pub mod lzbuffer;
-pub mod lzma;
-pub mod lzma2;
+/// lzma params
+pub mod lzma_params;
+/// options for decoding lzma file
 pub mod options;
-pub mod rangecoder;
-pub mod util;
-pub mod xz;
-
-#[cfg(feature = "stream")]
-pub mod stream;

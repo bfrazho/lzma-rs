@@ -1,7 +1,7 @@
-use crate::decode::lzbuffer;
-use crate::decode::lzbuffer::LzBuffer;
-use crate::decode::lzma;
-use crate::decode::rangecoder;
+use crate::decode_internal::lzbuffer;
+use crate::decode_internal::lzbuffer::LzBuffer;
+use crate::decode_internal::lzma;
+use crate::decode_internal::rangecoder;
 use crate::error;
 use byteorder::{BigEndian, ReadBytesExt};
 use std::io;
