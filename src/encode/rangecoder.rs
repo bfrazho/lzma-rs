@@ -220,8 +220,8 @@ impl LenEncoder {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::decode::rangecoder::{LenDecoder, RangeDecoder};
-    use crate::{decode, encode};
+    use crate::decode_internal::rangecoder::{LenDecoder, RangeDecoder};
+    use crate::{decode_internal, encode};
     use std::io::BufReader;
 
     fn encode_decode(prob_init: u16, bits: &[bool]) {
@@ -265,7 +265,7 @@ mod test {
 
         let mut bufread = BufReader::new(buf.as_slice());
         let mut decoder = RangeDecoder::new(&mut bufread).unwrap();
-        let mut tree = decode::rangecoder::BitTree::new(num_bits);
+        let mut tree = decode_internal::rangecoder::BitTree::new(num_bits);
         for &v in values {
             assert_eq!(tree.parse(&mut decoder, true).unwrap(), v);
         }
@@ -307,7 +307,7 @@ mod test {
 
         let mut bufread = BufReader::new(buf.as_slice());
         let mut decoder = RangeDecoder::new(&mut bufread).unwrap();
-        let mut tree = decode::rangecoder::BitTree::new(num_bits);
+        let mut tree = decode_internal::rangecoder::BitTree::new(num_bits);
         for &v in values {
             assert_eq!(tree.parse_reverse(&mut decoder, true).unwrap(), v);
         }
